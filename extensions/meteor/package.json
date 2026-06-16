@@ -1,0 +1,107 @@
+{
+  "name": "meteor",
+  "title": "Meteor",
+  "description": "High-speed download manager. Download files, torrents, and magnet links with multi-connection acceleration, powered by aria2c.",
+  "version": "1.0.0",
+  "author": "mvrck-dev",
+  "icon": "icon.png",
+  "categories": [
+    "Productivity",
+    "Developer Tools",
+    "Applications"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "tasks",
+      "title": "Tasks",
+      "description": "Dashboard showing active, waiting, paused, and stopped downloads.",
+      "mode": "view",
+      "icon": "icon.png"
+    },
+    {
+      "name": "add-download",
+      "title": "Add Download",
+      "description": "Queue a new download via URL, HTTP, FTP, or Magnet link.",
+      "mode": "view",
+      "icon": "icon.png"
+    },
+    {
+      "name": "download-from-torrent",
+      "title": "Download from Torrent",
+      "description": "Load a local .torrent file and queue it in aria2.",
+      "mode": "view",
+      "icon": "icon.png"
+    },
+    {
+      "name": "configuration",
+      "title": "Configuration",
+      "description": "Configure download directory, speed limits, BitTorrent settings, and more.",
+      "mode": "view",
+      "icon": "icon.png"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "rpcPort",
+      "type": "textfield",
+      "required": true,
+      "title": "Aria2 RPC Port",
+      "description": "Port on which the local or remote aria2c RPC server runs (default: 6800).",
+      "default": "6800"
+    },
+    {
+      "name": "rpcSecret",
+      "type": "password",
+      "required": false,
+      "title": "RPC Secret Token",
+      "description": "Secret token configured in aria2.conf (leave blank if none).",
+      "default": ""
+    },
+    {
+      "name": "autoStartDaemon",
+      "type": "checkbox",
+      "required": false,
+      "title": "Auto-Start Daemon",
+      "description": "Automatically start a local background aria2c daemon if none is detected on the configured port.",
+      "default": true,
+      "label": "Enable local aria2c auto-start"
+    },
+    {
+      "name": "checkCertificate",
+      "type": "checkbox",
+      "required": false,
+      "title": "Verify SSL Certificates",
+      "description": "Verify HTTPS certificates. Disable if you encounter SSL/TLS handshake failures on some servers.",
+      "default": false,
+      "label": "Verify SSL/TLS certificates"
+    },
+    {
+      "name": "autoUpdate",
+      "type": "checkbox",
+      "required": false,
+      "title": "Automatic Updates",
+      "description": "Enable automatic background updates for this extension from the Raycast Store.",
+      "default": true,
+      "label": "Enable automatic updates"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.76.0",
+    "@raycast/utils": "^1.15.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.8",
+    "@types/node": "20.8.10",
+    "@types/react": "19.0.10",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint"
+  }
+}
