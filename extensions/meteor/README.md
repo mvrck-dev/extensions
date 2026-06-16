@@ -1,36 +1,58 @@
 # Meteor
 
-A full-featured download manager for Raycast, powered by [aria2](https://aria2.github.io/) — the open-source lightweight multi-protocol download utility.
+A premium, high-speed download manager for Raycast powered by [aria2](https://aria2.github.io/). Download files, torrents, and magnet links with multi-connection acceleration.
+
+---
+
+## Screenshots
+
+### 1. Download Interface
+Easily queue new downloads by pasting URLs. Customize the save directory, number of connection splits, and configure advanced Curl-style options like custom User-Agents, Cookies, Referers, or proxy servers.
+
+![Download Interface](metadata/aria-download-manager-1.png)
+
+### 2. Tasks View
+Monitor and manage your download queue in a unified list. View download speeds, progress percentages, file sizes, and estimated times of arrival (ETA) at a glance.
+
+![Tasks View](metadata/aria-download-manager-2.png)
+
+### 3. The Download Task Progress View
+Drill down into any active download to see a live piece-map grid, visualizing exactly which chunks have been downloaded in real-time as reported by the underlying engine.
+
+![Download Task Progress View](metadata/aria-download-manager-3.png)
+
+### 4. Torrent Client View
+Load local `.torrent` files directly from Finder. The extension automatically detects your selected file in Finder and pre-fills the path for quick queueing.
+
+![Torrent Client View](metadata/aria-download-manager-4.png)
 
 ---
 
 ## Features
 
-- **Unified Task Dashboard** — view all active, waiting, paused, completed, and failed downloads in one flat list
-- **Add Downloads** — queue URLs (HTTP/HTTPS/FTP), Magnet links, and direct file links; supports multi-connection splitting and custom headers
-- **Torrent Support** — load local `.torrent` files directly from Finder (auto-detects selected file) and queue them in aria2
-- **Visual Chunk Progress** — open any active download to see a live piece-map grid showing exactly which chunks have been downloaded, exactly as aria2 reports them
-- **Configuration** — set default download directory, bandwidth limits (up/down), BitTorrent seed ratio/time, connection limits, and mock User-Agent — all without leaving Raycast
-- **Session Persistence** — download queue survives daemon restarts and configuration changes; aria2 session is auto-saved every 10 seconds
-- **Dynamic Remove/Delete** — optionally configure the extension to delete the downloaded file from disk when removing a task
+- **High-Speed Accelerations** — Splits files into multiple connections for accelerated chunk downloading.
+- **Unified Task Dashboard** — Manage active, waiting, paused, completed, and failed downloads in one place.
+- **Advanced Request Headers** — Specify cookies, mock User-Agents, custom referers, and authorization credentials for protected download links.
+- **Finder Integration** — Select a `.torrent` file in Finder and trigger the download instantly from Raycast.
+- **Visual Chunk Mapping** — A live grid visualization of download pieces showing active chunk progression.
+- **Local Daemon Auto-Start** — Zero-setup configuration that automatically launches a local background daemon using precompiled macOS binaries.
+- **Session Persistence** — Automatically saves active tasks every 10 seconds, ensuring your queue survives system reboots or daemon restarts.
 
 ---
 
 ## Requirements
 
-### Option A — Bundled Binary (recommended, zero setup)
-
-The extension ships with a bundled `aria2c` binary for both Apple Silicon (`arm64`) and Intel (`x64`) Macs. No installation needed.
+### Option A — Bundled Binary (Recommended)
+No installation needed. The extension bundles precompiled `aria2c` binaries for both Apple Silicon (`arm64`) and Intel (`x64`) Macs, automatically executing the correct one for your system.
 
 ### Option B — System Homebrew
-
-If you prefer to manage aria2 yourself:
+If you prefer to use your own system-installed version of `aria2`, install it via Homebrew:
 
 ```bash
 brew install aria2
 ```
 
-The extension will automatically find it at `/opt/homebrew/bin/aria2c` or `/usr/local/bin/aria2c`.
+The extension will automatically detect it in your standard PATH or Homebrew directories.
 
 ---
 
@@ -40,57 +62,23 @@ The extension will automatically find it at `/opt/homebrew/bin/aria2c` or `/usr/
 
 | Setting | Default | Description |
 |---|---|---|
-| **Aria2 RPC Port** | `6800` | Port for the aria2 JSON-RPC server |
-| **RPC Secret Token** | _(empty)_ | Optional secret for authenticated RPC access |
-| **Auto-Start Daemon** | On | Automatically launch a local aria2c daemon if none is running |
-| **Verify SSL Certificates** | Off | Enable to enforce HTTPS certificate validation |
+| **Aria2 RPC Port** | `6800` | Port for the local or remote JSON-RPC server |
+| **RPC Secret Token** | _(empty)_ | Optional authentication secret token |
+| **Auto-Start Daemon** | On | Automatically launch the local background daemon on startup |
+| **Verify SSL Certificates** | Off | Enforce HTTPS certificate validation |
+| **Automatic Updates** | On | Enable background extension updates from the Raycast Store |
 
-### In-App Configuration (Configuration command)
+### In-App Settings
 
-Open the **Configuration** command from Raycast to set:
-
-- Default download directory
-- Download and upload bandwidth limits
-- BitTorrent save-metadata, encryption, seeding behaviour
-- Maximum concurrent downloads and connections per server
-- Mock User-Agent (presets: Chrome, Aria2, Transmission, Wget)
-- Protocol defaults for Magnet and Thunder links
-- File deletion behaviour when removing tasks
-
----
-
-## Usage
-
-### Tasks
-
-Open **Tasks** to see your full download queue. Use the action panel (`Cmd+K`) to:
-
-- Pause / Resume individual downloads
-- Remove or Delete tasks
-- Reveal completed files in Finder
-- Copy source URLs
-- Pause All / Resume All / Clear History globally
-
-### Add Download
-
-Open **Add Download** and paste one or more URLs (one per line). Choose a save directory, number of connection splits, optional rename, and advanced curl-style options (User-Agent, Referer, Cookie, Authorization, Proxy).
-
-### Download from Torrent
-
-Select a `.torrent` file in Finder, then open **Download from Torrent**. The file path is pre-filled automatically. Choose your save directory and confirm.
-
-### Configuration
-
-Open **Configuration** to adjust download limits, BitTorrent behaviour, and other daemon settings. Changes are applied immediately — the daemon restarts in the background if needed, preserving your entire task queue via session files.
-
----
-
-## Remote Aria2 Instance
-
-The extension can also connect to a remote aria2 daemon. Set the **Aria2 RPC Port** and **RPC Secret Token** in preferences, and disable **Auto-Start Daemon** so the extension doesn't try to spawn a local one.
+Open the **Configuration** command in Raycast to set:
+- Default save directories.
+- Download and upload speed limits.
+- BitTorrent encryption, metadata saving, and seeding ratio rules.
+- Maximum concurrent downloads and server connection limits.
+- User-Agent presets (Chrome, Transmission, Wget, Aria2).
 
 ---
 
 ## Contributing
 
-Issues and PRs welcome at [github.com/mvrck-dev/meteor](https://github.com/mvrck-dev/meteor).
+Issues and Pull Requests are welcome at [github.com/mvrck-dev/meteor](https://github.com/mvrck-dev/meteor).
