@@ -73,7 +73,7 @@
       "required": false,
       "title": "Verify SSL Certificates",
       "description": "Verify HTTPS certificates. Disable if you encounter SSL/TLS handshake failures on some servers.",
-      "default": false,
+      "default": true,
       "label": "Verify SSL/TLS certificates"
     },
     {

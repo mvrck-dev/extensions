@@ -13,23 +13,35 @@ interface Preferences {
 
 /**
  * Checks if aria2c is running and responding to JSON-RPC on the given port.
+ * Validates that the response format is indeed a JSON-RPC response from aria2c.
  */
-export async function isAria2Running(port: number): Promise<boolean> {
+export async function isAria2Running(
+  port: number,
+  secret?: string,
+): Promise<boolean> {
   try {
-    await fetch(`http://127.0.0.1:${port}/jsonrpc`, {
+    const params = secret ? [`token:${secret}`] : [];
+    const res = await fetch(`http://127.0.0.1:${port}/jsonrpc`, {
       method: "POST",
       body: JSON.stringify({
         jsonrpc: "2.0",
         id: "ping",
         method: "aria2.getVersion",
+        params,
       }),
       headers: { "Content-Type": "application/json" },
       signal: AbortSignal.timeout(500),
     });
-    // If we get a response, the port is active (even if unauthorized HTTP 400/401)
-    return true;
+    const text = await res.text();
+    const json = JSON.parse(text);
+    return (
+      json &&
+      json.jsonrpc === "2.0" &&
+      json.id === "ping" &&
+      (json.result !== undefined ||
+        (json.error !== undefined && typeof json.error.message === "string"))
+    );
   } catch {
-    // Connection refused means nothing is running on this port
     return false;
   }
 }
@@ -249,7 +261,7 @@ export async function startAria2Daemon(): Promise<void> {
   }
 
   // If already running, check configuration. If mismatch, shutdown and restart.
-  if (await isAria2Running(port)) {
+  if (await isAria2Running(port, preferences.rpcSecret)) {
     const matches = await checkDaemonConfigMatches(port, preferences);
     if (matches) {
       return;
@@ -261,7 +273,7 @@ export async function startAria2Daemon(): Promise<void> {
     await shutdownDaemon(port, preferences.rpcSecret);
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (await isAria2Running(port)) {
+    if (await isAria2Running(port, preferences.rpcSecret)) {
       killPortProcess(port);
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
@@ -308,8 +320,18 @@ export async function startAria2Daemon(): Promise<void> {
     args.push("--check-certificate=false");
   }
 
+  let tempConfPath = "";
   if (preferences.rpcSecret) {
-    args.push(`--rpc-secret=${preferences.rpcSecret}`);
+    try {
+      const rand = Math.random().toString(36).substring(2, 15);
+      tempConfPath = path.join(environment.supportPath, `aria2-${rand}.conf`);
+      fs.writeFileSync(tempConfPath, `rpc-secret=${preferences.rpcSecret}\n`, {
+        mode: 0o600,
+      });
+      args.push(`--conf-path=${tempConfPath}`);
+    } catch (e) {
+      console.error("Failed to create temporary config file:", e);
+    }
   }
 
   // Download Directory
@@ -386,7 +408,7 @@ export async function startAria2Daemon(): Promise<void> {
     let isRunning = false;
     for (let i = 0; i < 10; i++) {
       await new Promise((resolve) => setTimeout(resolve, 200));
-      if (await isAria2Running(port)) {
+      if (await isAria2Running(port, preferences.rpcSecret)) {
         isRunning = true;
         break;
       }
@@ -398,5 +420,15 @@ export async function startAria2Daemon(): Promise<void> {
   } catch (error) {
     console.error("Failed to start aria2c daemon:", error);
     throw error;
+  } finally {
+    if (tempConfPath) {
+      try {
+        if (fs.existsSync(tempConfPath)) {
+          fs.unlinkSync(tempConfPath);
+        }
+      } catch (e) {
+        console.error("Failed to delete temporary config file:", e);
+      }
+    }
   }
 }

@@ -68,6 +68,7 @@ async function rpcCall<T>(method: string, params: unknown[] = []): Promise<T> {
     method: "POST",
     body: JSON.stringify(body),
     headers: { "Content-Type": "application/json" },
+    signal: AbortSignal.timeout(5000),
   });
 
   if (!response.ok) {
